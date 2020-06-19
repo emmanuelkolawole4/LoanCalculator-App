@@ -1,11 +1,17 @@
 // listen for submit event
 const form = document.querySelector('#loan-form');
-form.addEventListener('submit', calculateResults);
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  // make sure results are hidden
+  document.querySelector('#results').style.display = 'none';
+  // show loader
+  document.querySelector('#loading').style.display = 'block';
+  // claculate results after 2 seconds
+  setTimeout(calculateResults, 2000);
+});
 
 // calculate results
 function calculateResults(e) {
-  e.preventDefault();
-
   // UI variables
   const amountUI = document.querySelector('#amount');
   const interestUI = document.querySelector('#interest');
@@ -22,10 +28,14 @@ function calculateResults(e) {
   const x = (1 + calculatedInterest) ** calculatedPayments;
   const monthly = (principal * x * calculatedInterest) / (x - 1);
   if (isFinite(monthly)) {
-    loading();
     monthlyPaymentUI.value = monthly.toFixed(2);
     totalPaymentUI.value = (monthly * calculatedPayments).toFixed(2);
     totalInterestUI.value = ((monthly * calculatedPayments) - principal).toFixed(2);
+
+    // show results
+    document.querySelector('#results').style.display = 'block';
+    // hide loader
+    document.querySelector('#loading').style.display = 'none';
   } else {
     showError('Please check to make sure input values are valid!');
   }
@@ -34,6 +44,10 @@ function calculateResults(e) {
 
 // show error
 function showError(error) {
+  // hide results
+  document.querySelector('#results').style.display = 'none';
+  // hide loader
+  document.querySelector('#loading').style.display = 'none';
   // create error div
   const errorUI = document.createElement('div'); 
   // add bootstrap error class to the div
